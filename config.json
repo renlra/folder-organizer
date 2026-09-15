@@ -1,0 +1,76 @@
+{
+    "settings": {
+        "target_base_directory": "~/Downloads/Organized_Output",
+        "move_folders_into_directory": "Folders",
+        "group_by_extension": false,
+        "handle_undefined": true,
+        "undefined_path": "Others"
+    },
+    "standard_categories": {
+        "Documents": {
+            "path": "Documents",
+            "extensions": [
+                ".pdf",
+                ".doc",
+                ".docx",
+                ".txt",
+                ".xlsx",
+                ".pptx"
+            ]
+        },
+        "Pictures": {
+            "path": "Pictures",
+            "extensions": [
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".bmp",
+                ".webp"
+            ]
+        },
+        "Gifs": {
+            "path": "Gifs",
+            "extensions": [
+                ".gif"
+            ]
+        },
+        "Executables": {
+            "path": "Executables",
+            "extensions": [
+                ".exe",
+                ".msi",
+                ".bat",
+                ".sh"
+            ]
+        },
+        "Archives": {
+            "path": "Archives",
+            "extensions": [
+                ".zip",
+                ".7z",
+                ".rar",
+                ".tar",
+                ".gz"
+            ]
+        }
+    },
+    "special_rules": {
+        "video_files": {
+            "extensions": [
+                ".mp4",
+                ".mkv",
+                ".avi",
+                ".mov",
+                ".wmv"
+            ],
+            "large_size_threshold_bytes": 1073741824,
+            "subtitle_extensions": [
+                ".srt",
+                ".ass",
+                ".vtt"
+            ],
+            "primary_path": "Movies",
+            "fallback_path": "Videos"
+        }
+    }
+}
