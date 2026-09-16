@@ -1,21 +1,21 @@
-import sys
 import json
-from pathlib import Path
+import sys
+
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication,
-    QMainWindow,
-    QWidget,
+    QCheckBox,
+    QFileDialog,
+    QHBoxLayout,
     QLabel,
     QLineEdit,
+    QMainWindow,
+    QMessageBox,
     QPushButton,
-    QCheckBox,
     QTextEdit,
     QVBoxLayout,
-    QHBoxLayout,
-    QFileDialog,
-    QMessageBox,
+    QWidget,
 )
-from PySide6.QtCore import Qt
 
 from src.core import FolderOrganizer
 
@@ -53,19 +53,39 @@ class MainWindow(QMainWindow):
         output_layout.addWidget(output_button)
         main_layout.addLayout(output_layout)
 
-        # 3. Settings Checkboxes
-        settings_layout = QHBoxLayout()
+        # 3. Settings Checkboxes Layout
+        settings_layout = QVBoxLayout()  # Changed to vertical for cleaner stacking
+
+        self.inplace_checkbox = QCheckBox(
+            "Organize in-place (use source folder as output)"
+        )
+        self.inplace_checkbox.setChecked(True)
+        self.inplace_checkbox.toggled.connect(self.toggle_inplace_mode)
+        settings_layout.addWidget(self.inplace_checkbox)
+
+        options_layout = QHBoxLayout()
         self.group_ext_checkbox = QCheckBox("Group by Extension Subfolders")
         self.handle_undef_checkbox = QCheckBox("Move Unknown Extensions to 'Others'")
-        settings_layout.addWidget(self.group_ext_checkbox)
-        settings_layout.addWidget(self.handle_undef_checkbox)
+        options_layout.addWidget(self.group_ext_checkbox)
+        options_layout.addWidget(self.handle_undef_checkbox)
+        settings_layout.addLayout(options_layout)
+
         main_layout.addLayout(settings_layout)
 
         # 4. Action Button
         self.run_button = QPushButton("Run Organizer")
-        self.run_button.setStyleSheet(
-            "background-color: #2ecc71; color: white; font-weight: bold; font-size: 14pt; padding: 10px;"
-        )
+        self.run_button.setStyleSheet("""
+            QPushButton {
+                background-color: #2ecc71; 
+                color: white; 
+                font-weight: bold; 
+                font-size: 14pt; 
+                padding: 10px;
+            }
+            QPushButton:pressed {
+                background-color: #27ae60;
+            }
+        """)
         self.run_button.clicked.connect(self.run_organization)
         main_layout.addWidget(self.run_button)
 
@@ -86,12 +106,31 @@ class MainWindow(QMainWindow):
         self.output_input.setText(settings.get("target_base_directory", ""))
         self.group_ext_checkbox.setChecked(settings.get("group_by_extension", False))
         self.handle_undef_checkbox.setChecked(settings.get("handle_undefined", True))
+
+        inplace = settings.get("organize_in_place", True)
+        self.inplace_checkbox.setChecked(inplace)
+        self.output_input.setEnabled(not inplace)
+
         self.log_output.append("Configuration loaded successfully from config.json.")
+
+    def toggle_inplace_mode(self, checked):
+        """Greys out the output path input when in-place mode is active"""
+        self.output_input.setEnabled(not checked)
+        if checked:
+            # Mirror source to output if source exists
+            if self.source_input.text():
+                self.output_input.setText(self.source_input.text())
+            self.update_config_setting("organize_in_place", True)
+        else:
+            self.update_config_setting("organize_in_place", False)
 
     def select_source_folder(self):
         dir_path = QFileDialog.getExistingDirectory(self, "Select Source Directory")
         if dir_path:
             self.source_input.setText(dir_path)
+            # If in-place is checked, automatically update the output field too
+            if self.inplace_checkbox.isChecked():
+                self.output_input.setText(dir_path)
 
     def select_output_folder(self):
         dir_path = QFileDialog.getExistingDirectory(self, "Select Output Directory")
@@ -129,13 +168,8 @@ class MainWindow(QMainWindow):
             self.log_output.append(f"ERROR: {str(e)}")
             QMessageBox.critical(self, "Error", f"An error occurred:\n{str(e)}")
 
-
 def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()

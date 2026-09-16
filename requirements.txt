@@ -1,1 +1,2 @@
 pyside6PySide6>=6.0.0
+pywin32>=312

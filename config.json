@@ -1,5 +1,6 @@
 {
     "settings": {
+        "organize_in_place": true,
         "target_base_directory": "~/Downloads/Organized_Output",
         "move_folders_into_directory": "Folders",
         "group_by_extension": false,
@@ -40,7 +41,8 @@
                 ".exe",
                 ".msi",
                 ".bat",
-                ".sh"
+                ".sh",
+                ".cmd"
             ]
         },
         "Archives": {
@@ -71,6 +73,17 @@
             ],
             "primary_path": "Movies",
             "fallback_path": "Videos"
+        },
+        "installer_rule": {
+            "extensions": [
+                ".exe",
+                ".msi",
+                ".msix"
+            ],
+            "name_keyword": ["install", "setup", "package", "pkg"],
+            "large_size_threshold_bytes": 12428800,
+            "primary_path": "Installers",
+            "fallback_path": "Executables"
         }
     }
 }
