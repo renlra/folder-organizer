@@ -10,7 +10,7 @@ A cross-platform utility tool designed to automatically clean up messy folders (
   - Special video rules (differentiating large movies vs. regular videos using file size and subtitle detection).
   - Optional extension subfolder grouping.
   - Handling for undefined/unknown extensions.
-- [ ] **Graphical User Interface (GUI):** PySide6 desktop interface.
+- [x] **Graphical User Interface (GUI):** PySide6 desktop interface.
 
 ## Tech Stack
 - **Python 3.x**
