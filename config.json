@@ -5,7 +5,8 @@
         "move_folders_into_directory": "Folders",
         "group_by_extension": false,
         "handle_undefined": true,
-        "undefined_path": "Others"
+        "undefined_path": "Others",
+        "exclude_existing_folders": false
     },
     "standard_categories": {
         "Documents": {

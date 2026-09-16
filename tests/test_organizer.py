@@ -110,3 +110,34 @@ def test_default_config_path_is_project_relative(monkeypatch, tmp_path):
 
     expected = Path(__file__).resolve().parents[1] / "config.json"
     assert organizer.config_path == expected
+
+
+def test_default_config_path_uses_executable_directory_when_frozen(monkeypatch, tmp_path):
+    bundle_dir = tmp_path / "bundle"
+    bundle_dir.mkdir()
+    config_file = bundle_dir / "config.json"
+    config_file.write_text('{"settings": {"organize_in_place": true}}')
+
+    monkeypatch.setattr("sys.frozen", True, raising=False)
+    monkeypatch.setattr("sys.executable", str(bundle_dir / "FolderOrganizer.exe"), raising=False)
+
+    organizer = FolderOrganizer()
+
+    assert organizer.config_path == config_file
+
+
+def test_managed_folders_can_be_excluded_when_enabled(tmp_path):
+    source_dir = tmp_path / "downloads_mock"
+    source_dir.mkdir()
+    existing_documents = source_dir / "Documents"
+    existing_documents.mkdir()
+    (source_dir / "report.pdf").write_text("pdf content")
+
+    organizer = FolderOrganizer()
+    organizer.config["settings"]["organize_in_place"] = True
+    organizer.config["settings"]["exclude_existing_folders"] = True
+
+    organizer.organize(str(source_dir))
+
+    assert (existing_documents / "report.pdf").exists()
+    assert not (source_dir / "Folders" / "Documents").exists()

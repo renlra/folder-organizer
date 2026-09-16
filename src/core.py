@@ -1,5 +1,6 @@
 import json
 import shutil
+import sys
 from pathlib import Path
 
 from src.utils import check_if_installer
@@ -16,6 +17,10 @@ class FolderOrganizer:
 
     @staticmethod
     def _default_config_path() -> Path:
+        if getattr(sys, "frozen", False):
+            executable_dir = Path(sys.executable).resolve().parent
+            return executable_dir / "config.json"
+
         project_root = Path(__file__).resolve().parents[1]
         return project_root / "config.json"
 
@@ -23,8 +28,11 @@ class FolderOrganizer:
     def _resolve_config_path(config_path):
         path = Path(config_path).expanduser()
         if not path.is_absolute():
-            project_root = Path(__file__).resolve().parents[1]
-            path = project_root / path
+            if getattr(sys, "frozen", False):
+                path = Path(sys.executable).resolve().parent / path
+            else:
+                project_root = Path(__file__).resolve().parents[1]
+                path = project_root / path
         return path
 
     def load_config(self):
@@ -51,9 +59,10 @@ class FolderOrganizer:
             source_path if settings.get("organize_in_place", False) else self.get_target_base()
         )
         known_folders = self._build_known_folders(settings)
+        exclude_existing = settings.get("exclude_existing_folders", False)
 
         for item in list(source_path.iterdir()):
-            if self._should_skip_item(item, settings, base_target, known_folders):
+            if self._should_skip_item(item, settings, base_target, known_folders, exclude_existing):
                 continue
 
             if item.is_dir():
@@ -74,12 +83,16 @@ class FolderOrganizer:
 
         return known_folders
 
-    def _should_skip_item(self, item, settings, base_target, known_folders):
+    def _should_skip_item(self, item, settings, base_target, known_folders, exclude_existing):
         if not item.exists():
             return True
 
         if settings.get("organize_in_place", False):
             if item.is_dir() and item.name in known_folders:
+                return True
+
+        if exclude_existing and item.is_dir():
+            if item.name in self._existing_target_folders(base_target):
                 return True
 
         if not settings.get("organize_in_place", False) and (
@@ -88,6 +101,16 @@ class FolderOrganizer:
             return True
 
         return False
+
+    def _existing_target_folders(self, base_target: Path):
+        if not base_target.exists():
+            return set()
+
+        return {
+            child.name
+            for child in base_target.iterdir()
+            if child.is_dir()
+        }
 
     def _handle_directory(self, item: Path, base_target: Path):
         """Handles sub-folders based on the configuration settings."""

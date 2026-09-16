@@ -66,8 +66,10 @@ class MainWindow(QMainWindow):
         options_layout = QHBoxLayout()
         self.group_ext_checkbox = QCheckBox("Group by Extension Subfolders")
         self.handle_undef_checkbox = QCheckBox("Move Unknown Extensions to 'Others'")
+        self.exclude_existing_checkbox = QCheckBox("Exclude existing managed folders")
         options_layout.addWidget(self.group_ext_checkbox)
         options_layout.addWidget(self.handle_undef_checkbox)
+        options_layout.addWidget(self.exclude_existing_checkbox)
         settings_layout.addLayout(options_layout)
 
         main_layout.addLayout(settings_layout)
@@ -106,6 +108,9 @@ class MainWindow(QMainWindow):
         self.output_input.setText(settings.get("target_base_directory", ""))
         self.group_ext_checkbox.setChecked(settings.get("group_by_extension", False))
         self.handle_undef_checkbox.setChecked(settings.get("handle_undefined", True))
+        self.exclude_existing_checkbox.setChecked(
+            settings.get("exclude_existing_folders", False)
+        )
 
         inplace = settings.get("organize_in_place", True)
         self.inplace_checkbox.setChecked(inplace)
@@ -155,6 +160,9 @@ class MainWindow(QMainWindow):
         )
         self.update_config_setting(
             "handle_undefined", self.handle_undef_checkbox.isChecked()
+        )
+        self.update_config_setting(
+            "exclude_existing_folders", self.exclude_existing_checkbox.isChecked()
         )
 
         self.log_output.append(f"\n--- Starting organization of: {source_dir} ---")

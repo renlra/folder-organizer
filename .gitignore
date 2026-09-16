@@ -16,3 +16,4 @@ build/
 dist/
 *.spec
 installer.cmd
+upx.exe
