@@ -3,4 +3,16 @@ src/__pycache__/
 .vscode/
 .idea/
 *.pyc
-.activate-venv.cmd
+.pytest_cache/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+activate-venv.cmd
+
+# Binary Builds
+build/
+dist/
+*.spec
+installer.cmd

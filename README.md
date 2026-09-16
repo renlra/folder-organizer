@@ -17,5 +17,21 @@ A cross-platform utility tool designed to automatically clean up messy folders (
 - **Pathlib** (for native cross-platform path management)
 - **JSON** (for configuration management)
 
+## Disclaimer
+This project was mainly built and tested in a Windows setup, so while it aims to be cross-platform, it hasn't been extensively checked on Linux or macOS yet. Some behavior may vary a bit depending on the environment.
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 ## How to Run the Core Logic (Currently)
 You can test the backend engine via python script or interactive shell by importing the `FolderOrganizer` class from `src.core`.
+
+## 📦 Building an Executable
+If you want to build the standalone Windows executable yourself using PyInstaller:
+
+1. Install PyInstaller:
+   ```bash
+   pip install pyinstaller
+2. Run the build command from the root directory:
+   pyinstaller --noconsole --onefile --name="FolderOrganizer" src/main.py
+3. Copy your config.json into the output dist/ directory alongside the generated executable.
